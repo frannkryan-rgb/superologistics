@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Supero Logistics</title>
+  <style>
+    body { font-family: Arial; text-align: center; background: #0f172a; color: white; }
+    .box { background: #1e293b; padding: 20px; margin: 20px auto; width: 300px; border-radius: 10px; }
+    button { padding: 10px; background: #22c55e; color: white; border: none; border-radius: 5px; }
+    input { padding: 10px; width: 80%; }
+  </style>
+</head>
+
+<body>
+
+<h1>🚚 Supero Logistics</h1>
+<p>Fast & Reliable Delivery Service</p>
+
+<div class="box">
+  <h3>Generate Tracking Code</h3>
+  <button onclick="generateCode()">Generate Code</button>
+  <p id="code"></p>
+</div>
+
+<div class="box">
+  <h3>Track Package</h3>
+  <input type="text" id="trackInput" placeholder="Enter tracking code">
+  <br><br>
+  <button onclick="trackPackage()">Track</button>
+  <p id="result"></p>
+</div>
+
+<script>
+function generateCode() {
+  let code = "SL" + Math.floor(Math.random()*1000000);
+  document.getElementById("code").innerText = code;
+}
+
+function trackPackage() {
+  let input = document.getElementById("trackInput").value;
+  if(input.startsWith("SL")){
+    document.getElementById("result").innerText = "Package is in transit 🚚";
+  } else {
+    document.getElementById("result").innerText = "Invalid tracking code ❌";
+  }
+}
+</script>
+
+</body>
+</html>
