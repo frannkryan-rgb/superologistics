@@ -46,13 +46,14 @@ Order Delivery Now
 
 <div class="box">
   <h3>Track Package</h3>
-  <input type="text" id="trackInput" placeholder="Enter tracking code">
+  <input type="text" id="trackingInput" placeholder="Enter tracking code">
   <br><br>
   <button onclick="trackPackage()">Track</button>
+
   <p id="result"></p>
 </div>
 
-<script>
+  <script>
 function generateCode() {
   let name = document.getElementById("name").value;
   let phone = document.getElementById("phone").value;
@@ -65,13 +66,44 @@ function generateCode() {
 
   let code = "SL" + Math.floor(Math.random() * 100000);
 
+  let order = {
+    name: name,
+    phone: phone,
+    address: address,
+    status: "Processing"
+  };
+
+  // Get existing orders
+  let orders = JSON.parse(localStorage.getItem("orders")) || {};
+
+  // Save new order
+  orders[code] = order;
+
+  localStorage.setItem("orders", JSON.stringify(orders));
+
   document.getElementById("code").innerHTML =
-    "Tracking Code: " + code +
-    "<br>Name: " + name +
-    "<br>Phone: " + phone +
-    "<br>Address: " + address;
+    "Tracking Code: " + code;
 }
-</script>
+    function trackPackage() {
+  let input = document.getElementById("trackingInput").value;
+
+  let orders = JSON.parse(localStorage.getItem("orders")) || {};
+
+  if (orders[input]) {
+    let order = orders[input];
+
+    document.getElementById("result").innerHTML =
+      "Name: " + order.name +
+      "<br>Phone: " + order.phone +
+      "<br>Address: " + order.address +
+      "<br>Status: " + order.status;
+  } else {
+    document.getElementById("result").innerHTML =
+      "Tracking code not found!";
+  }
+
+    
+  </script>
 
 </body>
 </html>
