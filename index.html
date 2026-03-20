@@ -23,12 +23,26 @@
 <button onclick="window.location.href='https://wa.me/+447506072640'">
 Order Delivery Now
 </button>
+<h2>Our Services</h2>
 
 <div class="box">
-  <h3>Generate Tracking Code</h3>
-  <button onclick="generateCode()">Generate Code</button>
-  <p id="code"></p>
+  <p>🚚 Same-day delivery within Port Harcourt</p>
+  <p>📦 Pickup & drop-off services</p>
+  <p>🌍 Inter-state delivery</p>
+  <p>🏪 Business logistics support</p>
 </div>
+<div class="box">
+  <div class="box">
+  <h3>Customer Details</h3>
+
+  <input type="text" id="name" placeholder="Customer Name"><br><br>
+  <input type="text" id="phone" placeholder="Phone Number"><br><br>
+  <input type="text" id="address" placeholder="Delivery Address"><br><br>
+
+  <button onclick="generateCode()">Generate Tracking Code</button>
+
+  <p id="code"></p>
+  </div>
 
 <div class="box">
   <h3>Track Package</h3>
@@ -56,17 +70,6 @@ function generateCode() {
     "<br>Name: " + name +
     "<br>Phone: " + phone +
     "<br>Address: " + address;
-}
-
-
-
-function trackPackage() {
-  let input = document.getElementById("trackInput").value;
-  if(input.startsWith("SL")){
-    document.getElementById("result").innerText = "Package is in transit 🚚";
-  } else {
-    document.getElementById("result").innerText = "Invalid tracking code ❌";
-  }
 }
 </script>
 
