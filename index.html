@@ -59,6 +59,28 @@ Order Delivery Now
 
   <script>
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<script>
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyD8q05hAUlsoaE7KqXnlTx7U7",
+  authDomain: "supero-logistics.firebaseapp.com",
+  projectId: "supero-logistics",
+  storageBucket: "supero-logistics.firebasestorage.app",
+  messagingSenderId: "715603909286",
+  appId: "1:715603909286:web:185ad07c875fa89d3b7267",
+  measurementId: "G-CV5JKV0C05"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+
+// ✅ GENERATE TRACKING CODE (SAVE TO FIREBASE)
 function generateCode() {
   let name = document.getElementById("name").value;
   let phone = document.getElementById("phone").value;
@@ -69,60 +91,63 @@ function generateCode() {
     return;
   }
 
-  let code = "SL" + Math.floor(Math.random() * 100000);
+  let code = "SL" + Math.floor(Math.random() * 1000000);
 
-  let order = {
+  db.collection("orders").doc(code).set({
     name: name,
     phone: phone,
     address: address,
     status: "Processing"
-  };
-
-  let orders = JSON.parse(localStorage.getItem("orders")) || {};
-  orders[code] = order;
-  localStorage.setItem("orders", JSON.stringify(orders));
-
-  document.getElementById("code").innerHTML = "Tracking Code: " + code;
+  })
+  .then(() => {
+    document.getElementById("code").innerHTML = "Tracking Code: " + code;
+  });
 }
 
+
+// ✅ TRACK PACKAGE (READ FROM FIREBASE)
 function trackPackage() {
   let input = document.getElementById("trackingInput").value;
 
-  let orders = JSON.parse(localStorage.getItem("orders")) || {};
+  db.collection("orders").doc(input).get()
+  .then((doc) => {
+    if (doc.exists) {
+      let order = doc.data();
 
-  if (orders[input]) {
-    let order = orders[input];
-
-    document.getElementById("result").innerHTML =
-      "Name: " + order.name +
-      "<br>Phone: " + order.phone +
-      "<br>Address: " + order.address +
-      "<br>Status: " + order.status;
-  } else {
-    document.getElementById("result").innerHTML =
-      "Tracking code not found!";
-  }
+      document.getElementById("result").innerHTML =
+        "Name: " + order.name +
+        "<br>Phone: " + order.phone +
+        "<br>Address: " + order.address +
+        "<br>Status: " + order.status;
+    } else {
+      document.getElementById("result").innerHTML = "Tracking code not found!";
+    }
+  });
 }
 
+
+// OPTIONAL: VIEW ALL ORDERS (ADMIN USE)
 function viewOrders() {
-  let orders = JSON.parse(localStorage.getItem("orders")) || {};
   let output = "<h3>All Orders</h3>";
 
-  for (let code in orders) {
-    let order = orders[code];
+  db.collection("orders").get().then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      let order = doc.data();
 
-    output +=
-      "<div style='margin:10px; padding:10px; background:#2c3e50; border-radius:10px;'>" +
-      "<b>Code:</b> " + code +
-      "<br><b>Name:</b> " + order.name +
-      "<br><b>Phone:</b> " + order.phone +
-      "<br><b>Address:</b> " + order.address +
-      "<br><b>Status:</b> " + order.status +
-      "</div>";
+      output +=
+        "<div style='margin:10px; padding:10px; background:#1e293b; color:white'>" +
+        "<b>Code:</b> " + doc.id +
+        "<br><b>Name:</b> " + order.name +
+        "<br><b>Phone:</b> " + order.phone +
+        "<br><b>Address:</b> " + order.address +
+        "<br><b>Status:</b> " + order.status +
+        "</div>";
+    });
+
+    document.getElementById("allOrders").innerHTML = output;
+  });
   }
-
-  document.getElementById("allOrders").innerHTML = output;
-    }
+    
     
   </script>
 
