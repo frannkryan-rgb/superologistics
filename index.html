@@ -39,8 +39,16 @@
 <h1>🚚 Supero Logistics</h1>
 <p>Fast & Reliable Delivery</p>
 
-<!-- ADD CUSTOMER -->
+<!-- ADMIN LOGIN -->
 <div class="box">
+  <h3>Admin Login</h3>
+  <input type="password" id="adminPass" placeholder="Enter Admin Password"><br>
+  <button onclick="login()">Login</button>
+  <p id="loginStatus"></p>
+</div>
+
+<!-- ADD CUSTOMER -->
+<div class="box" id="adminPanel" style="display:none;">
   <h3>Add Customer Order</h3>
 
   <input type="text" id="name" placeholder="Customer Name"><br>
@@ -52,7 +60,7 @@
   <p id="code"></p>
 </div>
 
-<!-- TRACK PACKAGE -->
+<!-- TRACK PACKAGE (PUBLIC) -->
 <div class="box">
   <h3>Track Package</h3>
 
@@ -64,7 +72,7 @@
 </div>
 
 <!-- VIEW ORDERS -->
-<div class="box">
+<div class="box" id="ordersPanel" style="display:none;">
   <h3>View All Orders</h3>
 
   <button onclick="viewOrders()">View Orders</button>
@@ -72,7 +80,7 @@
   <div id="allOrders"></div>
 </div>
 
-<!-- FIREBASE SCRIPT -->
+<!-- FIREBASE -->
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
@@ -89,6 +97,19 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+// 🔐 LOGIN SYSTEM
+window.login = function () {
+  let pass = document.getElementById("adminPass").value;
+
+  if (pass === "admin123") {
+    document.getElementById("loginStatus").innerHTML = "✅ Access Granted";
+    document.getElementById("adminPanel").style.display = "block";
+    document.getElementById("ordersPanel").style.display = "block";
+  } else {
+    document.getElementById("loginStatus").innerHTML = "❌ Wrong Password";
+  }
+};
 
 // GENERATE TRACKING CODE
 window.generateCode = async function () {
