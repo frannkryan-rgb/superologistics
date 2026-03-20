@@ -58,6 +58,7 @@ Order Delivery Now
 </div>
 
   <script>
+
 function generateCode() {
   let name = document.getElementById("name").value;
   let phone = document.getElementById("phone").value;
@@ -101,7 +102,9 @@ function trackPackage() {
     document.getElementById("result").innerHTML =
       "Tracking code not found!";
   }
-  function viewOrders() {
+}
+
+function viewOrders() {
   let orders = JSON.parse(localStorage.getItem("orders")) || {};
   let output = "<h3>All Orders</h3>";
 
@@ -119,8 +122,8 @@ function trackPackage() {
   }
 
   document.getElementById("allOrders").innerHTML = output;
-  }
-}
+    }
+    
   </script>
 
 </body>
