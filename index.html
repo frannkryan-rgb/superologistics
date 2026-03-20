@@ -101,6 +101,25 @@ function trackPackage() {
     document.getElementById("result").innerHTML =
       "Tracking code not found!";
   }
+  function viewOrders() {
+  let orders = JSON.parse(localStorage.getItem("orders")) || {};
+  let output = "<h3>All Orders</h3>";
+
+  for (let code in orders) {
+    let order = orders[code];
+
+    output +=
+      "<div style='margin:10px; padding:10px; background:#2c3e50; border-radius:10px;'>" +
+      "<b>Code:</b> " + code +
+      "<br><b>Name:</b> " + order.name +
+      "<br><b>Phone:</b> " + order.phone +
+      "<br><b>Address:</b> " + order.address +
+      "<br><b>Status:</b> " + order.status +
+      "</div>";
+  }
+
+  document.getElementById("allOrders").innerHTML = output;
+  }
 }
   </script>
 
