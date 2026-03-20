@@ -72,11 +72,9 @@
   <div id="allOrders"></div>
 </div>
 
-<!-- 🔥 FIREBASE SCRIPT -->
-<script type="module">
-
+  <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getFirestore, doc, setDoc, getDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+import { getFirestore, collection, doc, setDoc, getDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyD8q05hAUlsoaE7KqXnlTx7U7T0roYkqoY",
@@ -84,48 +82,38 @@ const firebaseConfig = {
   projectId: "supero-logistics",
   storageBucket: "supero-logistics.firebasestorage.app",
   messagingSenderId: "715603909286",
-  appId: "1:715603909286:web:185ad07c875fa89d3b7267",
-  measurementId: "G-CV5JKV0C05"
+  appId: "1:715603909286:web:185ad07c875fa89d3b7267"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-
-// ✅ GENERATE ORDER
+// GENERATE ORDER
 window.generateCode = async function () {
   let name = document.getElementById("name").value;
   let phone = document.getElementById("phone").value;
   let address = document.getElementById("address").value;
 
   if (!name || !phone || !address) {
-    alert("Please fill all fields!");
+    alert("Fill all fields");
     return;
   }
 
-  let code = "SL" + Math.floor(Math.random() * 1000000);
+  let code = "SL" + Math.floor(Math.random() * 100000);
 
-  let order = {
-    name,
-    phone,
-    address,
+  await setDoc(doc(db, "orders", code), {
+    name: name,
+    phone: phone,
+    address: address,
     status: "Processing"
-  };
-
-  await setDoc(doc(db, "orders", code), order);
+  });
 
   document.getElementById("code").innerHTML = "Tracking Code: " + code;
 };
 
-
-// ✅ TRACK PACKAGE
+// TRACK ORDER
 window.trackPackage = async function () {
   let input = document.getElementById("trackingInput").value;
-
-  if (!input) {
-    alert("Enter tracking code!");
-    return;
-  }
 
   const docRef = doc(db, "orders", input);
   const docSnap = await getDoc(docRef);
@@ -134,39 +122,39 @@ window.trackPackage = async function () {
     let order = docSnap.data();
 
     document.getElementById("result").innerHTML =
-      "<b>Name:</b> " + order.name +
-      "<br><b>Phone:</b> " + order.phone +
-      "<br><b>Address:</b> " + order.address +
-      "<br><b>Status:</b> " + order.status;
+      "Name: " + order.name +
+      "<br>Phone: " + order.phone +
+      "<br>Address: " + order.address +
+      "<br>Status: " + order.status;
   } else {
-    document.getElementById("result").innerHTML = "❌ Tracking code not found!";
+    document.getElementById("result").innerHTML = "Order not found";
   }
 };
 
-
-// ✅ VIEW ALL ORDERS
+// VIEW ALL ORDERS
 window.viewOrders = async function () {
   let output = "<h3>All Orders</h3>";
 
   const querySnapshot = await getDocs(collection(db, "orders"));
 
-  querySnapshot.forEach((docSnap) => {
-    let order = docSnap.data();
+  querySnapshot.forEach((doc) => {
+    let order = doc.data();
 
-    output +=
-      "<div style='margin:10px; padding:10px; background:#eee'>" +
-      "<b>Code:</b> " + docSnap.id +
-      "<br><b>Name:</b> " + order.name +
-      "<br><b>Phone:</b> " + order.phone +
-      "<br><b>Address:</b> " + order.address +
-      "<br><b>Status:</b> " + order.status +
-      "</div>";
+    output += `
+      <div style="margin:10px; padding:10px; background:#eee;">
+        <b>Code:</b> ${doc.id}<br>
+        <b>Name:</b> ${order.name}<br>
+        <b>Phone:</b> ${order.phone}<br>
+        <b>Address:</b> ${order.address}<br>
+        <b>Status:</b> ${order.status}
+      </div>
+    `;
   });
 
   document.getElementById("allOrders").innerHTML = output;
 };
+  </script>
 
-</script>
 
 </body>
 </html>
