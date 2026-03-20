@@ -69,41 +69,45 @@
     <p id="result"></p>
   </div>
 
-  <!-- Firebase + Tracking Script -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyD8q05hAUlsoaE7KqXnlTx7U7T0roYkqoY",
-      authDomain: "supero-logistics.firebaseapp.com",
-      projectId: "supero-logistics",
-      storageBucket: "supero-logistics.firebasestorage.app",
-      messagingSenderId: "715603909286",
-      appId: "1:715603909286:web:185ad07c875fa89d3b7267"
-    };
+const firebaseConfig = {
+  apiKey: "AIzaSyD8q05hAUlsoaE7KqXnlTx7U7T0roYkqoY",
+  authDomain: "supero-logistics.firebaseapp.com",
+  projectId: "supero-logistics",
+  storageBucket: "supero-logistics.firebasestorage.app",
+  messagingSenderId: "715603909286",
+  appId: "1:715603909286:web:185ad07c875fa89d3b7267"
+};
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-    window.trackPackage = async function () {
-      let input = document.getElementById("trackingInput").value;
+window.trackPackage = async function () {
+  let input = document.getElementById("trackingInput").value;
 
-      const docRef = doc(db, "orders", input);
-      const docSnap = await getDoc(docRef);
+  if (!input) {
+    document.getElementById("result").innerHTML = "Enter tracking code!";
+    return;
+  }
 
-      if (docSnap.exists()) {
-        let order = docSnap.data();
+  const docRef = doc(db, "orders", input);
+  const docSnap = await getDoc(docRef);
 
-        document.getElementById("result").innerHTML =
-          "Name: " + order.name +
-          "<br>Phone: " + order.phone +
-          "<br>Address: " + order.address +
-          "<br>Status: " + order.status;
-      } else {
-        document.getElementById("result").innerHTML = "Tracking code not found!";
-      }
-    };
+  if (docSnap.exists()) {
+    let order = docSnap.data();
+
+    document.getElementById("result").innerHTML =
+      "Name: " + order.name +
+      "<br>Phone: " + order.phone +
+      "<br>Address: " + order.address +
+      "<br>Status: " + order.status;
+  } else {
+    document.getElementById("result").innerHTML = "Tracking code not found!";
+  }
+};
   </script>
 
   <!-- Floating WhatsApp Button -->
