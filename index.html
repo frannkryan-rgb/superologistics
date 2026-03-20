@@ -73,18 +73,14 @@ function generateCode() {
     status: "Processing"
   };
 
-  // Get existing orders
   let orders = JSON.parse(localStorage.getItem("orders")) || {};
-
-  // Save new order
   orders[code] = order;
-
   localStorage.setItem("orders", JSON.stringify(orders));
 
-  document.getElementById("code").innerHTML =
-    "Tracking Code: " + code;
+  document.getElementById("code").innerHTML = "Tracking Code: " + code;
 }
-    function trackPackage() {
+
+function trackPackage() {
   let input = document.getElementById("trackingInput").value;
 
   let orders = JSON.parse(localStorage.getItem("orders")) || {};
@@ -101,6 +97,7 @@ function generateCode() {
     document.getElementById("result").innerHTML =
       "Tracking code not found!";
   }
+}
   </script>
 
 </body>
