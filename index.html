@@ -1,27 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Supero worldwide Logistics</title>
+  <title>Supero Logistics</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body {
       font-family: Arial;
       text-align: center;
-      background: url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d') no-repeat center center/cover;
+      background: url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d') no-repeat center/cover;
       color: white;
+      margin: 0;
     }
 
     .box {
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0,0,0,0.7);
       padding: 20px;
-      margin: 20px;
+      margin: 20px auto;
       border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
     }
 
     input {
       padding: 10px;
-      width: 80%;
-      margin: 5px;
+      width: 90%;
+      margin: 10px;
+      border-radius: 5px;
+      border: none;
     }
 
     button {
@@ -29,92 +35,86 @@
       background: #22c55e;
       color: white;
       border: none;
-      margin: 5px;
+      width: 90%;
       cursor: pointer;
+      border-radius: 5px;
     }
 
-    /* Floating WhatsApp */
-    .whatsapp-float {
+    #result {
+      margin-top: 15px;
+    }
+
+    .whatsapp {
       position: fixed;
-      width: 60px;
-      height: 60px;
       bottom: 20px;
       right: 20px;
-      background-color: #25D366;
+      background: #25D366;
       color: white;
-      font-size: 30px;
+      padding: 15px;
       border-radius: 50%;
-      text-align: center;
-      line-height: 60px;
-      box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
-      z-index: 1000;
       text-decoration: none;
+      font-size: 20px;
     }
   </style>
 </head>
 
 <body>
 
-  <h1>🚚 Supero Logistics</h1>
-  <img src="https://cdn-icons-png.flaticon.com/512/2920/2920256.png" width="80">
+<h1>🚚 Supero Logistics</h1>
+<p>Fast & Reliable Delivery</p>
 
-  <p>Fast & Reliable Delivery</p>
+<div class="box">
+  <h3>Track Package</h3>
+  <input id="code" placeholder="Enter Tracking Code">
+  <br>
+  <button onclick="track()">Track</button>
+  <p id="result"></p>
+</div>
 
-  <div class="box">
-    <h3>Track Package</h3>
-    <input type="text" id="trackingInput" placeholder="Enter Tracking Code">
-    <br><br>
-    <button onclick="trackPackage()">Track</button>
+<!-- Firebase (COMPAT VERSION - more stable) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
-    <p id="result"></p>
-  </div>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyD8q05hAUlsoaE7KqXnlTx7U7T0roYkqoY",
+    authDomain: "supero-logistics.firebaseapp.com",
+    projectId: "supero-logistics"
+  };
 
-  <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
 
-const firebaseConfig = {
-  apiKey: "AIzaSyD8q05hAUlsoaE7KqXnlTx7U7T0roYkqoY",
-  authDomain: "supero-logistics.firebaseapp.com",
-  projectId: "supero-logistics",
-  storageBucket: "supero-logistics.firebasestorage.app",
-  messagingSenderId: "715603909286",
-  appId: "1:715603909286:web:185ad07c875fa89d3b7267"
-};
+  function track() {
+    let code = document.getElementById("code").value;
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+    if (!code) {
+      document.getElementById("result").innerHTML = "Enter tracking code!";
+      return;
+    }
 
-window.trackPackage = async function () {
-  let input = document.getElementById("trackingInput").value;
-
-  if (!input) {
-    document.getElementById("result").innerHTML = "Enter tracking code!";
-    return;
+    db.collection("orders").doc(code).get()
+      .then(doc => {
+        if (doc.exists) {
+          let d = doc.data();
+          document.getElementById("result").innerHTML =
+            "Name: " + d.name +
+            "<br>Phone: " + d.phone +
+            "<br>Address: " + d.address +
+            "<br>Status: " + d.status;
+        } else {
+          document.getElementById("result").innerHTML = "Tracking code not found!";
+        }
+      })
+      .catch(err => {
+        document.getElementById("result").innerHTML = "Error loading data!";
+        console.error(err);
+      });
   }
+</script>
 
-  const docRef = doc(db, "orders", input);
-  const docSnap = await getDoc(docRef);
-
-  if (docSnap.exists()) {
-    let order = docSnap.data();
-
-    document.getElementById("result").innerHTML =
-      "Name: " + order.name +
-      "<br>Phone: " + order.phone +
-      "<br>Address: " + order.address +
-      "<br>Status: " + order.status;
-  } else {
-    document.getElementById("result").innerHTML = "Tracking code not found!";
-  }
-};
-  </script>
-
-  <!-- Floating WhatsApp Button -->
-  <a href="https://wa.me/+447506072640?text=Hello%20Supero%20Logistics%2C%20I%20want%20to%20make%20an%20inquiry." 
-     class="whatsapp-float" target="_blank">
-     💬
-  </a>
+<!-- WhatsApp -->
+<a href="https://wa.me/447506072640" class="whatsapp">💬</a>
 
 </body>
 </html>
