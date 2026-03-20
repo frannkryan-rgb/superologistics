@@ -110,19 +110,22 @@ function trackPackage() {
   let input = document.getElementById("trackingInput").value;
 
   db.collection("orders").doc(input).get()
-  .then((doc) => {
-    if (doc.exists) {
-      let order = doc.data();
+    .then((doc) => {
+      if (doc.exists) {
+        let order = doc.data();
 
-      document.getElementById("result").innerHTML =
-        "Name: " + order.name +
-        "<br>Phone: " + order.phone +
-        "<br>Address: " + order.address +
-        "<br>Status: " + order.status;
-    } else {
-      document.getElementById("result").innerHTML = "Tracking code not found!";
-    }
-  });
+        document.getElementById("result").innerHTML =
+          "Name: " + order.name +
+          "<br>Phone: " + order.phone +
+          "<br>Address: " + order.address +
+          "<br>Status: " + order.status;
+      } else {
+        document.getElementById("result").innerHTML = "Tracking code not found!";
+      }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
 }
 
 
