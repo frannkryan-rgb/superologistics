@@ -40,9 +40,25 @@ Order Delivery Now
 
 <script>
 function generateCode() {
-  let code = "SL" + Math.floor(Math.random()*1000000);
-  document.getElementById("code").innerText = code;
+  let name = document.getElementById("name").value;
+  let phone = document.getElementById("phone").value;
+  let address = document.getElementById("address").value;
+
+  if (name === "" || phone === "" || address === "") {
+    alert("Please fill all customer details!");
+    return;
+  }
+
+  let code = "SL" + Math.floor(Math.random() * 100000);
+
+  document.getElementById("code").innerHTML =
+    "Tracking Code: " + code +
+    "<br>Name: " + name +
+    "<br>Phone: " + phone +
+    "<br>Address: " + address;
 }
+
+
 
 function trackPackage() {
   let input = document.getElementById("trackInput").value;
