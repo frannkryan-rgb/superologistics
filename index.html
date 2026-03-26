@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html>
 <head>
   <title>Supero Logistics</title>
@@ -52,6 +52,13 @@
 
     button:hover {
       background: #16a34a;
+    }
+
+    .small-btn {
+      width: auto;
+      padding: 6px 10px;
+      margin: 5px;
+      font-size: 12px;
     }
   </style>
 </head>
@@ -119,7 +126,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 🔐 LOGIN SYSTEM (YOUR PASSWORD KEPT)
+// LOGIN
 window.login = function () {
   let pass = document.getElementById("adminPass").value;
 
@@ -132,7 +139,7 @@ window.login = function () {
   }
 };
 
-// GENERATE TRACKING CODE
+// GENERATE CODE
 window.generateCode = async function () {
   let name = document.getElementById("name").value;
   let phone = document.getElementById("phone").value;
@@ -155,7 +162,7 @@ window.generateCode = async function () {
   document.getElementById("code").innerHTML = "Tracking Code: " + code;
 };
 
-// TRACK PACKAGE (WITH COLOR STATUS)
+// TRACK
 window.trackPackage = async function () {
   let input = document.getElementById("trackingInput").value;
 
@@ -179,7 +186,7 @@ window.trackPackage = async function () {
   }
 };
 
-// VIEW ALL ORDERS (IMPROVED CARDS)
+// VIEW ORDERS WITH STATUS BUTTONS
 window.viewOrders = async function () {
   let output = "<h3>All Orders</h3>";
 
@@ -198,12 +205,26 @@ window.viewOrders = async function () {
         <b>Name:</b> ${data.name}<br>
         <b>Phone:</b> ${data.phone}<br>
         <b>Address:</b> ${data.address}<br>
-        <b>Status:</b> <span style="color:${color}; font-weight:bold;">${data.status}</span>
+        <b>Status:</b> <span style="color:${color}; font-weight:bold;">${data.status}</span><br><br>
+
+        <button class="small-btn" onclick="updateStatus('${docItem.id}','Processing')">Processing</button>
+        <button class="small-btn" onclick="updateStatus('${docItem.id}','In Transit')">In Transit</button>
+        <button class="small-btn" onclick="updateStatus('${docItem.id}','Delivered')">Delivered</button>
       </div>
     `;
   });
 
   document.getElementById("allOrders").innerHTML = output;
+};
+
+// UPDATE STATUS FUNCTION
+window.updateStatus = async function (id, newStatus) {
+  await setDoc(doc(db, "orders", id), {
+    status: newStatus
+  }, { merge: true });
+
+  alert("Status updated to " + newStatus);
+  viewOrders();
 };
 
 </script>
