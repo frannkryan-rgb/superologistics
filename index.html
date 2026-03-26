@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <title>Supero Logistics</title>
@@ -60,6 +60,14 @@
       margin: 5px;
       font-size: 12px;
     }
+
+    .delete-btn {
+      background: red;
+    }
+
+    .delete-btn:hover {
+      background: darkred;
+    }
   </style>
 </head>
 
@@ -112,7 +120,7 @@
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-import { getFirestore, doc, setDoc, getDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, getDocs, collection, deleteDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyD8q05hAUlsoaE7KqXnlTx7U7T0roYkqoY",
@@ -186,7 +194,7 @@ window.trackPackage = async function () {
   }
 };
 
-// VIEW ORDERS WITH STATUS BUTTONS
+// VIEW ORDERS
 window.viewOrders = async function () {
   let output = "<h3>All Orders</h3>";
 
@@ -210,6 +218,7 @@ window.viewOrders = async function () {
         <button class="small-btn" onclick="updateStatus('${docItem.id}','Processing')">Processing</button>
         <button class="small-btn" onclick="updateStatus('${docItem.id}','In Transit')">In Transit</button>
         <button class="small-btn" onclick="updateStatus('${docItem.id}','Delivered')">Delivered</button>
+        <button class="small-btn delete-btn" onclick="deleteOrder('${docItem.id}')">Delete</button>
       </div>
     `;
   });
@@ -217,7 +226,7 @@ window.viewOrders = async function () {
   document.getElementById("allOrders").innerHTML = output;
 };
 
-// UPDATE STATUS FUNCTION
+// UPDATE STATUS
 window.updateStatus = async function (id, newStatus) {
   await setDoc(doc(db, "orders", id), {
     status: newStatus
@@ -225,6 +234,17 @@ window.updateStatus = async function (id, newStatus) {
 
   alert("Status updated to " + newStatus);
   viewOrders();
+};
+
+// DELETE ORDER
+window.deleteOrder = async function (id) {
+  let confirmDelete = confirm("Delete this order?");
+
+  if (confirmDelete) {
+    await deleteDoc(doc(db, "orders", id));
+    alert("Order deleted");
+    viewOrders();
+  }
 };
 
 </script>
