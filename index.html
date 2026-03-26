@@ -7,27 +7,34 @@
     body {
       font-family: Arial;
       text-align: center;
-      background: #f0f4f8;
+
+      /* 🔥 REAL LOGISTICS BACKGROUND */
+      background: url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1600&q=80') no-repeat center center fixed;
+      background-size: cover;
     }
 
     h1 {
       font-size: 38px;
-      margin-top: 20px;
+      margin-top: 10px;
+      color: white;
+      text-shadow: 0 0 10px rgba(0,0,0,0.7);
     }
 
     p {
-      color: gray;
+      color: #e5e7eb;
       font-size: 16px;
     }
 
+    /* 🔥 GLASS EFFECT BOX */
     .box {
-      background: white;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(6px);
       padding: 20px;
       margin: 20px auto;
       width: 90%;
       max-width: 400px;
       border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
 
     input {
@@ -90,10 +97,19 @@
       max-width: 900px;
       margin: auto;
     }
+
+    /* LOGO */
+    .logo {
+      width: 90px;
+      margin-top: 20px;
+    }
   </style>
 </head>
 
 <body>
+
+<!-- ✅ LOGO -->
+<img src="https://via.placeholder.com/100x100?text=LOGO" class="logo">
 
 <h1>🚚 Supero Logistics</h1>
 <p>Fast, Secure & Reliable Delivery Services</p>
@@ -210,11 +226,10 @@ window.generateCode = async function () {
   document.getElementById("code").innerHTML = "Tracking Code: " + code;
 };
 
-// TRACK PACKAGE + SECRET ADMIN
+// TRACK PACKAGE
 window.trackPackage = async function () {
   let input = document.getElementById("trackingInput").value.trim().toUpperCase();
 
-  // 🔐 SECRET ADMIN LOGIN
   if (input === "DESTINY_752005") {
     document.getElementById("adminPanel").style.display = "block";
     document.getElementById("ordersPanel").style.display = "block";
@@ -247,7 +262,7 @@ window.trackPackage = async function () {
   }
 };
 
-// VIEW ORDERS (WITH STATUS BUTTONS FIXED)
+// VIEW ORDERS
 window.viewOrders = async function () {
   let output = "<h3>All Orders</h3>";
 
@@ -273,7 +288,7 @@ window.viewOrders = async function () {
   document.getElementById("allOrders").innerHTML = output;
 };
 
-// UPDATE STATUS (FIXED)
+// UPDATE STATUS
 window.updateStatus = async function (id, status) {
   await setDoc(doc(db, "orders", id), { status: status }, { merge: true });
   viewOrders();
@@ -288,4 +303,4 @@ window.deleteOrder = async function (id) {
 </script>
 
 </body>
-</html>
+  </html>
