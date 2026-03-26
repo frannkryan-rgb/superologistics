@@ -170,4 +170,122 @@
   </div>
 </div>
 
-<script type
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc, getDocs, collection, deleteDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD8q05hAUlsoaE7KqXnlTx7U7T0roYkqoY",
+  authDomain: "supero-logistics.firebaseapp.com",
+  projectId: "supero-logistics",
+  storageBucket: "supero-logistics.appspot.com",
+  messagingSenderId: "715603909286",
+  appId: "1:715603909286:web:185ad07c875fa89d3b7267"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// GENERATE CODE
+window.generateCode = async function () {
+  let name = document.getElementById("name").value;
+  let phone = document.getElementById("phone").value;
+  let address = document.getElementById("address").value;
+
+  if (!name || !phone || !address) {
+    alert("Please fill all fields");
+    return;
+  }
+
+  let code = "SL" + Math.floor(1000 + Math.random() * 9000);
+
+  await setDoc(doc(db, "orders", code), {
+    name,
+    phone,
+    address,
+    status: "Processing"
+  });
+
+  document.getElementById("code").innerHTML = "Tracking Code: " + code;
+};
+
+// TRACK PACKAGE + SECRET ADMIN
+window.trackPackage = async function () {
+  let input = document.getElementById("trackingInput").value.trim().toUpperCase();
+
+  // 🔐 SECRET ADMIN LOGIN
+  if (input === "DESTINY_752005") {
+    document.getElementById("adminPanel").style.display = "block";
+    document.getElementById("ordersPanel").style.display = "block";
+    document.getElementById("result").innerHTML = "🔓 Admin Access Granted";
+    return;
+  }
+
+  try {
+    const docRef = doc(db, "orders", input);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      let data = docSnap.data();
+
+      let color = "orange";
+      if (data.status === "Delivered") color = "green";
+      if (data.status === "In Transit") color = "blue";
+
+      document.getElementById("result").innerHTML =
+        "Name: " + data.name +
+        "<br>Phone: " + data.phone +
+        "<br>Address: " + data.address +
+        "<br>Status: <b style='color:" + color + "'>" + data.status + "</b>";
+    } else {
+      document.getElementById("result").innerHTML = "❌ Tracking code not found!";
+    }
+
+  } catch (error) {
+    document.getElementById("result").innerHTML = "⚠️ Error loading data";
+  }
+};
+
+// VIEW ORDERS (WITH STATUS BUTTONS FIXED)
+window.viewOrders = async function () {
+  let output = "<h3>All Orders</h3>";
+
+  const querySnapshot = await getDocs(collection(db, "orders"));
+
+  querySnapshot.forEach((docItem) => {
+    let data = docItem.data();
+
+    output += `
+      <div style="margin:10px; padding:15px; background:white; border-radius:10px;">
+        <b>${docItem.id}</b><br>
+        ${data.name}<br>
+        ${data.status}<br><br>
+
+        <button class="small-btn" onclick="updateStatus('${docItem.id}','Processing')">Processing</button>
+        <button class="small-btn" onclick="updateStatus('${docItem.id}','In Transit')">In Transit</button>
+        <button class="small-btn" onclick="updateStatus('${docItem.id}','Delivered')">Delivered</button>
+        <button class="small-btn delete-btn" onclick="deleteOrder('${docItem.id}')">Delete</button>
+      </div>
+    `;
+  });
+
+  document.getElementById("allOrders").innerHTML = output;
+};
+
+// UPDATE STATUS (FIXED)
+window.updateStatus = async function (id, status) {
+  await setDoc(doc(db, "orders", id), { status: status }, { merge: true });
+  viewOrders();
+};
+
+// DELETE
+window.deleteOrder = async function (id) {
+  await deleteDoc(doc(db, "orders", id));
+  viewOrders();
+};
+
+</script>
+
+</body>
+</html>
