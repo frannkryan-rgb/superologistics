@@ -1,8 +1,3 @@
-
-
-
-
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,8 +7,6 @@
     body {
       font-family: Arial;
       text-align: center;
-
-      /* 🔥 REAL LOGISTICS BACKGROUND */
       background: url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1600&q=80') no-repeat center center fixed;
       background-size: cover;
     }
@@ -25,21 +18,15 @@
       text-shadow: 0 0 10px rgba(0,0,0,0.7);
     }
 
-    p {
-      color: #e5e7eb;
-      font-size: 16px;
-    }
+    p { color: #e5e7eb; }
 
-    /* 🔥 GLASS EFFECT BOX */
     .box {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(6px);
+      background: rgba(255,255,255,0.95);
       padding: 20px;
       margin: 20px auto;
       width: 90%;
       max-width: 400px;
       border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
 
     input {
@@ -59,142 +46,56 @@
       border-radius: 6px;
       cursor: pointer;
       width: 90%;
-      font-size: 16px;
     }
 
-    button:hover {
-      background: #16a34a;
-    }
-
-    .small-btn {
-      width: auto;
-      padding: 6px 10px;
-      margin: 5px;
-      font-size: 12px;
-    }
-
-    .delete-btn {
-      background: red;
-    }
-
-    .delete-btn:hover {
-      background: darkred;
-    }
-
-    .footer {
-      background: #111827;
-      color: white;
-      padding: 30px 20px;
-      margin-top: 40px;
-      text-align: left;
-    }
-
-    .footer h3 {
-      color: #22c55e;
-    }
-
-    .footer p {
-      color: #d1d5db;
-      font-size: 14px;
-    }
-
-    .footer-container {
-      max-width: 900px;
-      margin: auto;
-    }
-
-    /* LOGO */
-    .logo {
-      width: 90px;
-      margin-top: 20px;
-    }
+    .small-btn { width:auto; padding:6px; font-size:12px; }
+    .delete-btn { background:red; }
   </style>
 </head>
 
 <body>
 
-<!-- ✅ LOGO -->
-<img src="https://via.placeholder.com/100x100?text=LOGO" class="logo">
-
 <h1>🚚 Supero Logistics</h1>
 <p>Fast, Secure & Reliable Delivery Services</p>
 
-<!-- ADMIN PANEL -->
+<!-- ADMIN -->
 <div class="box" id="adminPanel" style="display:none;">
-  <h3>Add Customer Order</h3>
-
-  <input type="text" id="name" placeholder="Customer Name">
-  <input type="text" id="phone" placeholder="Phone Number">
-  <input type="text" id="address" placeholder="Delivery Address">
-
+  <h3>Add Order</h3>
+  <input id="name" placeholder="Customer Name">
+  <input id="phone" placeholder="Phone">
+  <input id="address" placeholder="Address">
   <button onclick="generateCode()">Generate Tracking Code</button>
-
   <p id="code"></p>
 </div>
 
-<!-- TRACK PACKAGE -->
+<!-- TRACK -->
 <div class="box">
   <h3>Track Package</h3>
-
-  <input type="text" id="trackingInput" placeholder="Enter Tracking Code">
-
+  <input id="trackingInput" placeholder="Enter Tracking Code">
   <button onclick="trackPackage()">Track</button>
-
   <p id="result"></p>
-
-  <a href="https://wa.me/447506072640?text=Hello%20I%20want%20to%20ask%20about%20my%20package" target="_blank">
-    <button style="background:#25D366;">💬 Chat on WhatsApp</button>
-  </a>
 </div>
 
-<!-- VIEW ORDERS -->
+<!-- ORDERS -->
 <div class="box" id="ordersPanel" style="display:none;">
-  <h3>View All Orders</h3>
-
-  <button onclick="viewOrders()">View Orders</button>
-
+  <h3>Orders</h3>
+  <button onclick="viewOrders()">Load Orders</button>
   <div id="allOrders"></div>
-</div>
-
-<!-- FOOTER -->
-<div class="footer">
-  <div class="footer-container">
-
-    <h3>🌍 Supero Logistics Worldwide</h3>
-    <p>
-      Supero Logistics is a trusted global delivery company providing fast, secure,
-      and reliable shipping solutions across all continents.
-    </p>
-
-    <h3>📦 Our Services</h3>
-    <p>
-      • International Shipping<br>
-      • Express Delivery<br>
-      • Cargo Handling<br>
-      • Secure Tracking<br>
-      • Door-to-Door Delivery
-    </p>
-
-    <h3>🏢 Head Office (UK)</h3>
-    <p>
-      221B Baker Street<br>
-      London, NW1 6XE<br>
-      United Kingdom
-    </p>
-
-    <h3>📞 Contact</h3>
-    <p>
-      +44 7506 072640<br>
-      support@superologistics.online
-    </p>
-
-  </div>
 </div>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-import { getFirestore, doc, setDoc, getDoc, getDocs, collection, deleteDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  getDocs,
+  collection,
+  deleteDoc,
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyD8q05hAUlsoaE7KqXnlTx7U7T0roYkqoY",
@@ -208,18 +109,49 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// GENERATE CODE
-window.generateCode = async function () {
-  let name = document.getElementById("name").value;
-  let phone = document.getElementById("phone").value;
-  let address = document.getElementById("address").value;
+/* 🔐 SIMPLE ADMIN LOGIN */
+window.trackPackage = async function () {
+  let input = document.getElementById("trackingInput").value.trim().toUpperCase();
 
-  if (!name || !phone || !address) {
-    alert("Please fill all fields");
+  let adminPass = "SUPERADMIN123";
+
+  if (input === adminPass) {
+    document.getElementById("adminPanel").style.display = "block";
+    document.getElementById("ordersPanel").style.display = "block";
+    document.getElementById("result").innerHTML = "🔓 Admin Access Granted";
     return;
   }
 
-  let code = "SL" + Math.floor(1000 + Math.random() * 9000);
+  const docRef = doc(db, "orders", input);
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    let data = docSnap.data();
+
+    let color = data.status === "Delivered" ? "green"
+              : data.status === "In Transit" ? "blue"
+              : "orange";
+
+    document.getElementById("result").innerHTML = `
+      Name: ${data.name}<br>
+      Phone: ${data.phone}<br>
+      Address: ${data.address}<br>
+      Status: <b style="color:${color}">${data.status}</b>
+    `;
+  } else {
+    document.getElementById("result").innerHTML = "❌ Tracking code not found!";
+  }
+};
+
+/* CREATE ORDER */
+window.generateCode = async function () {
+  let name = nameInput.value;
+  let phone = phone.value;
+  let address = address.value;
+
+  if (!name || !phone || !address) return alert("Fill all fields");
+
+  let code = "SL" + Math.floor(Math.random() * 9000 + 1000);
 
   await setDoc(doc(db, "orders", code), {
     name,
@@ -228,78 +160,42 @@ window.generateCode = async function () {
     status: "Processing"
   });
 
-  document.getElementById("code").innerHTML = "Tracking Code: " + code;
+  document.getElementById("code").innerText = "Tracking Code: " + code;
 };
 
-// TRACK PACKAGE
-window.trackPackage = async function () {
-  let input = document.getElementById("trackingInput").value.trim().toUpperCase();
-
-  if (input === "DESTINY_752005") {
-    document.getElementById("adminPanel").style.display = "block";
-    document.getElementById("ordersPanel").style.display = "block";
-    document.getElementById("result").innerHTML = "🔓 Admin Access Granted";
-    return;
-  }
-
-  try {
-    const docRef = doc(db, "orders", input);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      let data = docSnap.data();
-
-      let color = "orange";
-      if (data.status === "Delivered") color = "green";
-      if (data.status === "In Transit") color = "blue";
-
-      document.getElementById("result").innerHTML =
-        "Name: " + data.name +
-        "<br>Phone: " + data.phone +
-        "<br>Address: " + data.address +
-        "<br>Status: <b style='color:" + color + "'>" + data.status + "</b>";
-    } else {
-      document.getElementById("result").innerHTML = "❌ Tracking code not found!";
-    }
-
-  } catch (error) {
-    document.getElementById("result").innerHTML = "⚠️ Error loading data";
-  }
-};
-
-// VIEW ORDERS
+/* VIEW ORDERS */
 window.viewOrders = async function () {
-  let output = "<h3>All Orders</h3>";
+  let output = "";
 
-  const querySnapshot = await getDocs(collection(db, "orders"));
+  const snapshot = await getDocs(collection(db, "orders"));
 
-  querySnapshot.forEach((docItem) => {
-    let data = docItem.data();
+  snapshot.forEach((docItem) => {
+    let d = docItem.data();
 
     output += `
-      <div style="margin:10px; padding:15px; background:white; border-radius:10px;">
+      <div style="background:#fff;margin:10px;padding:10px;border-radius:8px;">
         <b>${docItem.id}</b><br>
-        ${data.name}<br>
-        ${data.status}<br><br>
+        ${d.name}<br>
+        ${d.status}<br><br>
 
         <button class="small-btn" onclick="updateStatus('${docItem.id}','Processing')">Processing</button>
-        <button class="small-btn" onclick="updateStatus('${docItem.id}','In Transit')">In Transit</button>
+        <button class="small-btn" onclick="updateStatus('${docItem.id}','In Transit')">Transit</button>
         <button class="small-btn" onclick="updateStatus('${docItem.id}','Delivered')">Delivered</button>
         <button class="small-btn delete-btn" onclick="deleteOrder('${docItem.id}')">Delete</button>
       </div>
     `;
   });
 
-  document.getElementById("allOrders").innerHTML = output;
+  allOrders.innerHTML = output || "No orders found";
 };
 
-// UPDATE STATUS
+/* UPDATE STATUS */
 window.updateStatus = async function (id, status) {
-  await setDoc(doc(db, "orders", id), { status: status }, { merge: true });
+  await updateDoc(doc(db, "orders", id), { status });
   viewOrders();
 };
 
-// DELETE
+/* DELETE ORDER */
 window.deleteOrder = async function (id) {
   await deleteDoc(doc(db, "orders", id));
   viewOrders();
